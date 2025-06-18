@@ -1,0 +1,11 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% block title %}Ajouter/Modifier une catégorie{% endblock %}
+{% block content %}
+<h2>{% if form.instance.pk %}Modifier{% else %}Ajouter{% endif %} une catégorie</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn">Enregistrer</button>
+</form>
+<a href="{% url 'dashboard:category_list' %}">Retour à la liste des catégories</a>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% block title %}Liste des départs{% endblock %}
+{% block content %}
+<h2>Liste des départs</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Trajet</th>
+            <th>Bus</th>
+            <th>Date</th>
+            <th>Heure</th>
+            <th>Actif</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for departure in object_list %}
+        <tr>
+            <td>{{ departure.trip }}</td>
+            <td>{{ departure.bus }}</td>
+            <td>{{ departure.date }}</td>
+            <td>{{ departure.time }}</td>
+            <td>{{ departure.is_active|yesno:"Oui,Non" }}</td>
+            <td>
+                <a href="{% url 'dashboard:departure_edit' departure.pk %}">Modifier</a> |
+                <a href="{% url 'dashboard:departure_delete' departure.pk %}">Supprimer</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">Aucun départ enregistré.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'dashboard:departure_add' %}" class="btn">Ajouter un départ</a>
+{% endblock %}

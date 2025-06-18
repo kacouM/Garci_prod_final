@@ -1,0 +1,37 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% block title %}Liste des trajets{% endblock %}
+{% block content %}
+<h2>Liste des trajets</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Origine</th>
+            <th>Destination</th>
+            <th>Catégorie</th>
+            <th>Description</th>
+            <th>Prix</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for trip in object_list %}
+        <tr>
+            <td>{{ trip.origin }}</td>
+            <td>{{ trip.destination }}</td>
+            <td>{{ trip.category }}</td>
+            <td>{{ trip.description }}</td>
+            <td>{{ trip.price }} FCFA</td>
+            <td>
+                <a href="{% url 'dashboard:trip_edit' trip.pk %}">Modifier</a> |
+                <a href="{% url 'dashboard:trip_delete' trip.pk %}">Supprimer</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">Aucun trajet enregistré.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'dashboard:trip_add' %}" class="btn">Ajouter un trajet</a>
+{% endblock %}

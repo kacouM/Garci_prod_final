@@ -1,0 +1,31 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% block title %}Liste des bus{% endblock %}
+{% block content %}
+<h2>Liste des bus</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Capacité</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for bus in object_list %}
+        <tr>
+            <td>{{ bus.name }}</td>
+            <td>{{ bus.capacity }}</td>
+            <td>
+                <a href="{% url 'dashboard:bus_edit' bus.pk %}">Modifier</a> |
+                <a href="{% url 'dashboard:bus_delete' bus.pk %}">Supprimer</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">Aucun bus enregistré.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'dashboard:bus_add' %}" class="btn">Ajouter un bus</a>
+{% endblock %}

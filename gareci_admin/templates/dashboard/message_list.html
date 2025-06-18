@@ -1,0 +1,33 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% block title %}Messages de contact{% endblock %}
+{% block content %}
+<h2>Messages de contact</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Message</th>
+            <th>Date d'envoi</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for msg in messages %}
+        <tr>
+            <td>{{ msg.name }}</td>
+            <td>{{ msg.email }}</td>
+            <td>{{ msg.message }}</td>
+            <td>{{ msg.submitted_at }}</td>
+            <td>
+                <a href="{% url 'dashboard:message_reply' msg.id %}" class="btn btn-sm btn-primary">Répondre / Modifier</a>
+                <a href="{% url 'dashboard:message_delete' msg.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Supprimer ce message ?');">Supprimer</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">Aucun message reçu.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'dashboard:index' %}">Retour au dashboard</a>
+{% endblock %}

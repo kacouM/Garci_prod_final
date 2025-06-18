@@ -1,0 +1,11 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% block title %}Supprimer le message{% endblock %}
+{% block content %}
+<h2>Supprimer le message</h2>
+<p>Voulez-vous vraiment supprimer ce message de <strong>{{ object.name }}</strong> ({{ object.email }}) ?</p>
+<p><strong>Message :</strong> {{ object.message }}</p>
+<form method="post">{% csrf_token %}
+    <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+    <a href="{% url 'dashboard:message_list' %}" class="btn">Annuler</a>
+</form>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% block title %}Supprimer une réservation{% endblock %}
+{% block content %}
+<h2>Confirmer la suppression</h2>
+<p>Voulez-vous vraiment supprimer la réservation n°{{ object.id }} ({{ object.departure.trip.origin }} → {{ object.departure.trip.destination }} du {{ object.departure.date }}) ?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+    <a href="{% url 'dashboard:reservation_list' %}" class="btn">Annuler</a>
+</form>
+{% endblock %}

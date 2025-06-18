@@ -1,0 +1,43 @@
+{% extends 'dashboard/dashboard_base.html' %}
+{% block title %}Toutes les réservations{% endblock %}
+{% block content %}
+<h2>Toutes les réservations</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Client</th>
+            <th>Trajet</th>
+            <th>Date départ</th>
+            <th>Date réservation</th>
+            <th>Statut</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reservation in reservations %}
+        <tr>
+            <td>{{ reservation.id }}</td>
+            <td>{{ reservation.user.username }}</td>
+            <td>{{ reservation.departure.trip.origin }} → {{ reservation.departure.trip.destination }}</td>
+            <td>{{ reservation.departure.date }} {{ reservation.departure.time|time:'H:i' }}</td>
+            <td>{{ reservation.booked_at|date:'d/m/Y' }} à {{ reservation.booked_at|time:'H:i' }}</td>
+            <td>{% if reservation.status == 'P' %}En attente{% elif reservation.status == 'C' %}Confirmée{% elif reservation.status == 'X' %}Annulée{% endif %}</td>
+            <td>
+                {% if reservation.status == 'P' %}
+                    <form method="post" action="{% url 'dashboard:reservation_confirm' reservation.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-success">Confirmer</button>
+                    </form>
+                {% endif %}
+                <a href="{% url 'dashboard:reservation_edit' reservation.id %}" class="btn btn-sm btn-warning">Modifier</a>
+                <a href="{% url 'dashboard:reservation_delete' reservation.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Voulez-vous vraiment supprimer cette réservation ?');">Supprimer</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">Aucune réservation trouvée.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'dashboard:index' %}" class="btn">Retour au dashboard</a>
+{% endblock %}
