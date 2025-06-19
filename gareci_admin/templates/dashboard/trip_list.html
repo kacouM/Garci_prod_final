@@ -1,37 +1,199 @@
 {% extends 'dashboard/dashboard_base.html' %}
 {% block title %}Liste des trajets{% endblock %}
 {% block content %}
-<h2>Liste des trajets</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Origine</th>
-            <th>Destination</th>
-            <th>Catégorie</th>
-            <th>Description</th>
-            <th>Prix</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for trip in object_list %}
-        <tr>
-            <td>{{ trip.origin }}</td>
-            <td>{{ trip.destination }}</td>
-            <td>{{ trip.category }}</td>
-            <td>{{ trip.description }}</td>
-            <td>{{ trip.price }} FCFA</td>
-            <td>
-                <a href="{% url 'dashboard:trip_edit' trip.pk %}">Modifier</a> |
-                <a href="{% url 'dashboard:trip_delete' trip.pk %}">Supprimer</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="6">Aucun trajet enregistré.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<a href="{% url 'dashboard:trip_add' %}" class="btn">Ajouter un trajet</a>
+<style>
+    /* Container */
+    .trips-container {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    /* Header */
+    .trips-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .trips-header h2 {
+        color: #333;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 5px;
+    }
+
+    .trips-header h2 i {
+        color: #FF6B00;
+    }
+
+    /* Table */
+    .trips-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    .trips-table th {
+        background-color: #f8f9fa;
+        padding: 12px 15px;
+        text-align: left;
+        font-weight: 600;
+        color: #555;
+        border-bottom: 2px solid #eee;
+    }
+
+    .trips-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+    }
+
+    .trips-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .trips-table tr:hover td {
+        background-color: rgba(255, 107, 0, 0.03);
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-weight: 500;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background-color: #FF6B00;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #e05d00;
+    }
+
+    .btn-sm {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 30px;
+        color: #999;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    /* Price styling */
+    .price {
+        font-weight: 600;
+        color: #28a745;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .trips-table {
+            display: block;
+            overflow-x: auto;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            gap: 5px;
+        }
+    }
+</style>
+
+<div class="trips-container">
+    <div class="trips-header">
+        <h2><i class="fas fa-route"></i> Liste des trajets</h2>
+        <a href="{% url 'dashboard:trip_add' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Ajouter un trajet
+        </a>
+    </div>
+
+    <table class="trips-table">
+        <thead>
+            <tr>
+                <th>Origine</th>
+                <th>Destination</th>
+                <th>Catégorie</th>
+                <th>Description</th>
+                <th>Prix</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for trip in object_list %}
+            <tr>
+                <td>{{ trip.origin }}</td>
+                <td>{{ trip.destination }}</td>
+                <td>{{ trip.category }}</td>
+                <td>{{ trip.description|truncatechars:50 }}</td>
+                <td class="price">{{ trip.price }} FCFA</td>
+                <td>
+                    <div class="action-buttons">
+                        <a href="{% url 'dashboard:trip_edit' trip.pk %}" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                        <a href="{% url 'dashboard:trip_delete' trip.pk %}" 
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('Voulez-vous vraiment supprimer ce trajet ?');">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="empty-state">
+                    <i class="fas fa-route"></i>
+                    <p>Aucun trajet enregistré</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

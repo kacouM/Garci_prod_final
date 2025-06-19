@@ -177,20 +177,6 @@
 
             <!-- Page Content -->
             <div class="content-wrapper">
-                {% block messages %}
-                <!-- System messages -->
-                {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                    <li class="message message-{{ message.tags }}">
-                        {{ message }}
-                        <button class="close-message"><i class="fas fa-times"></i></button>
-                    </li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-                {% endblock %}
-                
                 {% block content %}
                 <!-- Main content block to be overridden by child templates -->
                 {% endblock %}

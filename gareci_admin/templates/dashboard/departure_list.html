@@ -1,37 +1,212 @@
 {% extends 'dashboard/dashboard_base.html' %}
 {% block title %}Liste des départs{% endblock %}
 {% block content %}
-<h2>Liste des départs</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Trajet</th>
-            <th>Bus</th>
-            <th>Date</th>
-            <th>Heure</th>
-            <th>Actif</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for departure in object_list %}
-        <tr>
-            <td>{{ departure.trip }}</td>
-            <td>{{ departure.bus }}</td>
-            <td>{{ departure.date }}</td>
-            <td>{{ departure.time }}</td>
-            <td>{{ departure.is_active|yesno:"Oui,Non" }}</td>
-            <td>
-                <a href="{% url 'dashboard:departure_edit' departure.pk %}">Modifier</a> |
-                <a href="{% url 'dashboard:departure_delete' departure.pk %}">Supprimer</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="6">Aucun départ enregistré.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<a href="{% url 'dashboard:departure_add' %}" class="btn">Ajouter un départ</a>
+<style>
+    /* Container */
+    .departures-container {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    /* Header */
+    .departures-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .departures-header h2 {
+        color: #333;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 5px;
+    }
+
+    .departures-header h2 i {
+        color: #FF6B00;
+    }
+
+    /* Table */
+    .departures-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    .departures-table th {
+        background-color: #f8f9fa;
+        padding: 12px 15px;
+        text-align: left;
+        font-weight: 600;
+        color: #555;
+        border-bottom: 2px solid #eee;
+    }
+
+    .departures-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+    }
+
+    .departures-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .departures-table tr:hover td {
+        background-color: rgba(255, 107, 0, 0.03);
+    }
+
+    /* Status */
+    .status-active {
+        color: #28a745;
+        font-weight: 500;
+    }
+
+    .status-inactive {
+        color: #dc3545;
+        font-weight: 500;
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-weight: 500;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background-color: #FF6B00;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #e05d00;
+    }
+
+    .btn-sm {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 30px;
+        color: #999;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    /* Date/Time styling */
+    .datetime {
+        font-family: monospace;
+        font-weight: 500;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .departures-table {
+            display: block;
+            overflow-x: auto;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            gap: 5px;
+        }
+    }
+</style>
+
+<div class="departures-container">
+    <div class="departures-header">
+        <h2><i class="fas fa-bus"></i> Liste des départs</h2>
+        <a href="{% url 'dashboard:departure_add' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Ajouter un départ
+        </a>
+    </div>
+
+    <table class="departures-table">
+        <thead>
+            <tr>
+                <th>Trajet</th>
+                <th>Bus</th>
+                <th>Date</th>
+                <th>Heure</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for departure in object_list %}
+            <tr>
+                <td>{{ departure.trip }}</td>
+                <td>{{ departure.bus }}</td>
+                <td class="datetime">{{ departure.date|date:"d/m/Y" }}</td>
+                <td class="datetime">{{ departure.time|time:"H:i" }}</td>
+                <td class="{% if departure.is_active %}status-active{% else %}status-inactive{% endif %}">
+                    {{ departure.is_active|yesno:"Actif,Inactif" }}
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        <a href="{% url 'dashboard:departure_edit' departure.pk %}" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                        <a href="{% url 'dashboard:departure_delete' departure.pk %}" 
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('Voulez-vous vraiment supprimer ce départ ?');">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="empty-state">
+                    <i class="fas fa-bus"></i>
+                    <p>Aucun départ enregistré</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

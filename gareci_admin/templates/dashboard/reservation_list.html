@@ -1,43 +1,245 @@
 {% extends 'dashboard/dashboard_base.html' %}
 {% block title %}Toutes les réservations{% endblock %}
 {% block content %}
-<h2>Toutes les réservations</h2>
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Client</th>
-            <th>Trajet</th>
-            <th>Date départ</th>
-            <th>Date réservation</th>
-            <th>Statut</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for reservation in reservations %}
-        <tr>
-            <td>{{ reservation.id }}</td>
-            <td>{{ reservation.user.username }}</td>
-            <td>{{ reservation.departure.trip.origin }} → {{ reservation.departure.trip.destination }}</td>
-            <td>{{ reservation.departure.date }} {{ reservation.departure.time|time:'H:i' }}</td>
-            <td>{{ reservation.booked_at|date:'d/m/Y' }} à {{ reservation.booked_at|time:'H:i' }}</td>
-            <td>{% if reservation.status == 'P' %}En attente{% elif reservation.status == 'C' %}Confirmée{% elif reservation.status == 'X' %}Annulée{% endif %}</td>
-            <td>
-                {% if reservation.status == 'P' %}
-                    <form method="post" action="{% url 'dashboard:reservation_confirm' reservation.id %}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-success">Confirmer</button>
-                    </form>
-                {% endif %}
-                <a href="{% url 'dashboard:reservation_edit' reservation.id %}" class="btn btn-sm btn-warning">Modifier</a>
-                <a href="{% url 'dashboard:reservation_delete' reservation.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Voulez-vous vraiment supprimer cette réservation ?');">Supprimer</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="7">Aucune réservation trouvée.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
-<a href="{% url 'dashboard:index' %}" class="btn">Retour au dashboard</a>
+<style>
+    /* Container */
+    .reservations-container {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    /* Header */
+    .reservations-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .reservations-header h2 {
+        color: #333;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 5px;
+    }
+
+    .reservations-header h2 i {
+        color: #FF6B00;
+    }
+
+    /* Table */
+    .reservations-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .reservations-table th {
+        background-color: #f8f9fa;
+        padding: 12px 15px;
+        text-align: left;
+        font-weight: 600;
+        color: #555;
+        border-bottom: 2px solid #eee;
+    }
+
+    .reservations-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+    }
+
+    .reservations-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .reservations-table tr:hover td {
+        background-color: rgba(255, 107, 0, 0.03);
+    }
+
+    /* Status Badge */
+    .status-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    .status-pending {
+        background-color: #fff3cd;
+        color: #d39e00;
+    }
+
+    .status-confirmed {
+        background-color: #e6f7ee;
+        color: #28a745;
+    }
+
+    .status-cancelled {
+        background-color: #f8d7da;
+        color: #dc3545;
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-weight: 500;
+        text-decoration: none;
+        font-size: 0.85rem;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-sm {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+    .btn-default {
+        background-color: #f8f9fa;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+
+    .btn-default:hover {
+        background-color: #e2e6ea;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 30px;
+        color: #999;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .reservations-table {
+            display: block;
+            overflow-x: auto;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            gap: 5px;
+        }
+    }
+</style>
+
+<div class="reservations-container">
+    <div class="reservations-header">
+        <h2><i class="fas fa-list-alt"></i> Toutes les réservations</h2>
+        <a href="{% url 'dashboard:index' %}" class="btn btn-default">
+            <i class="fas fa-arrow-left"></i> Retour au dashboard
+        </a>
+    </div>
+
+    <table class="reservations-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Client</th>
+                <th>Trajet</th>
+                <th>Date départ</th>
+                <th>Date réservation</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reservation in reservations %}
+            <tr>
+                <td>#{{ reservation.id }}</td>
+                <td>{{ reservation.user.username }}</td>
+                <td>{{ reservation.departure.trip.origin }} → {{ reservation.departure.trip.destination }}</td>
+                <td>{{ reservation.departure.date|date:"d/m/Y" }} {{ reservation.departure.time|time:'H:i' }}</td>
+                <td>{{ reservation.booked_at|date:'d/m/Y H:i' }}</td>
+                <td>
+                    <span class="status-badge 
+                        {% if reservation.status == 'P' %}status-pending
+                        {% elif reservation.status == 'C' %}status-confirmed
+                        {% elif reservation.status == 'X' %}status-cancelled{% endif %}">
+                        {% if reservation.status == 'P' %}En attente
+                        {% elif reservation.status == 'C' %}Confirmée
+                        {% elif reservation.status == 'X' %}Annulée{% endif %}
+                    </span>
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        {% if reservation.status == 'P' %}
+                            <form method="post" action="{% url 'dashboard:reservation_confirm' reservation.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    <i class="fas fa-check"></i> Confirmer
+                                </button>
+                            </form>
+                        {% endif %}
+                        <a href="{% url 'dashboard:reservation_edit' reservation.id %}" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                        <a href="{% url 'dashboard:reservation_delete' reservation.id %}" 
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('Voulez-vous vraiment supprimer cette réservation ?');">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="empty-state">
+                    <i class="fas fa-ticket-alt"></i>
+                    <p>Aucune réservation trouvée</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

@@ -1,20 +1,283 @@
 {% extends 'dashboard/dashboard_base.html' %}
 {% block title %}Répondre au message{% endblock %}
 {% block content %}
-<h2>Répondre au message de {{ object.name }}</h2>
-<p><strong>Email :</strong> {{ object.email }}</p>
-<p><strong>Message :</strong> {{ object.message }}</p>
-<p><strong>Date d'envoi :</strong> {{ object.submitted_at }}</p>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-success">Envoyer la réponse</button>
-    <a href="{% url 'dashboard:message_list' %}" class="btn">Annuler</a>
-</form>
-{% if object.reply %}
-    <hr>
-    <h3>Réponse actuelle</h3>
-    <p>{{ object.reply }}</p>
-    <p><em>Envoyée le {{ object.replied_at }}</em></p>
-{% endif %}
+<style>
+    /* Style cohérent avec le thème */
+    .reply-container {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 30px;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .reply-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+    
+    .reply-header i {
+        color: #28a745;
+        font-size: 1.8rem;
+    }
+    
+    .reply-header h2 {
+        font-size: 1.5rem;
+        color: #333;
+        margin: 0;
+    }
+    
+    /* Style des détails du message */
+    .message-details {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 4px;
+        margin-bottom: 25px;
+    }
+    
+    .detail-item {
+        display: flex;
+        margin-bottom: 12px;
+    }
+    
+    .detail-label {
+        font-weight: 600;
+        color: #495057;
+        min-width: 100px;
+    }
+    
+    .detail-value {
+        color: #212529;
+        flex: 1;
+    }
+    
+    .message-content {
+        background: white;
+        padding: 15px;
+        border-radius: 4px;
+        border: 1px solid #eee;
+        line-height: 1.6;
+        margin-top: 15px;
+    }
+    
+    /* Style du formulaire */
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+    }
+    
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        min-height: 150px;
+        transition: all 0.3s;
+    }
+    
+    .form-group textarea:focus {
+        border-color: #28a745;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+    }
+    
+    /* Style de la réponse existante */
+    .existing-reply {
+        background-color: #e8f5e9;
+        padding: 20px;
+        border-radius: 4px;
+        margin-top: 30px;
+        border-left: 4px solid #28a745;
+    }
+    
+    .reply-header-small {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+    
+    .reply-header-small i {
+        color: #28a745;
+        font-size: 1.2rem;
+    }
+    
+    .reply-content {
+        line-height: 1.6;
+        white-space: pre-wrap;
+    }
+    
+    .reply-date {
+        font-size: 0.85rem;
+        color: #6c757d;
+        text-align: right;
+        margin-top: 10px;
+    }
+    
+    /* Boutons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 16px;
+        border-radius: 4px;
+        font-weight: 500;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+        gap: 8px;
+    }
+    
+    .btn-success {
+        background-color: #28a745;
+        color: white;
+    }
+    
+    .btn-success:hover {
+        background-color: #218838;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+    }
+    
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .reply-container {
+            padding: 20px;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+        }
+        
+        .detail-item {
+            flex-direction: column;
+        }
+        
+        .detail-label {
+            margin-bottom: 4px;
+        }
+    }
+</style>
+
+<div class="reply-container">
+    <div class="reply-header">
+        <i class="fas fa-reply"></i>
+        <h2>Répondre à {{ object.name }}</h2>
+    </div>
+    
+    <div class="message-details">
+        <div class="detail-item">
+            <span class="detail-label"><i class="fas fa-envelope"></i> Email :</span>
+            <span class="detail-value">{{ object.email }}</span>
+        </div>
+        {% if object.phone %}
+        <div class="detail-item">
+            <span class="detail-label"><i class="fas fa-phone"></i> Téléphone :</span>
+            <span class="detail-value">{{ object.phone }}</span>
+        </div>
+        {% endif %}
+        <div class="detail-item">
+            <span class="detail-label"><i class="fas fa-calendar-alt"></i> Date :</span>
+            <span class="detail-value">{{ object.submitted_at|date:"d/m/Y H:i" }}</span>
+        </div>
+        {% if object.subject %}
+        <div class="detail-item">
+            <span class="detail-label"><i class="fas fa-tag"></i> Sujet :</span>
+            <span class="detail-value">{{ object.subject }}</span>
+        </div>
+        {% endif %}
+        <div class="message-content">
+            {{ object.message|linebreaks }}
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_reply"><i class="fas fa-edit"></i> Votre réponse :</label>
+            <textarea id="id_reply" name="reply" required>{{ form.reply.value|default:'' }}</textarea>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-paper-plane"></i> Envoyer la réponse
+            </button>
+            <a href="{% url 'dashboard:message_list' %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Annuler
+            </a>
+        </div>
+    </form>
+    
+    {% if object.reply %}
+    <div class="existing-reply">
+        <div class="reply-header-small">
+            <i class="fas fa-check-circle"></i>
+            <h3>Réponse envoyée</h3>
+        </div>
+        <div class="reply-content">{{ object.reply|linebreaks }}</div>
+        <div class="reply-date">
+            <i class="fas fa-clock"></i> Envoyée le {{ object.replied_at|date:"d/m/Y à H:i" }}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mise en forme automatique du texte
+        const textarea = document.getElementById('id_reply');
+        if (textarea) {
+            textarea.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    const start = this.selectionStart;
+                    const end = this.selectionEnd;
+                    
+                    this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
+                    this.selectionStart = this.selectionEnd = start + 4;
+                }
+            });
+        }
+        
+        // Confirmation avant de quitter si du texte est saisi
+        window.addEventListener('beforeunload', function(e) {
+            if (textarea && textarea.value.trim() !== '') {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    });
+</script>
 {% endblock %}

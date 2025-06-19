@@ -10,8 +10,7 @@ class ContactMessage(models.Model):
     reply = models.TextField(blank=True, null=True)
     replied_at = models.DateTimeField(blank=True, null=True)
 
-    def __str__(self):
-        return f"Message de {self.name} ({self.email})"
+    
 
 class Reservation(models.Model):
     STATUS_CHOICES = [
