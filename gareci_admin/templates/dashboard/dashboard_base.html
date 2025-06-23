@@ -115,6 +115,18 @@
                             <li><a href="{% url 'dashboard:message_list' %}?status=replied">Répondu</a></li>
                         </ul>
                     </li>
+
+                    <!-- Section home -->
+                    <li class="nav-section-header">
+                        <span><i class="fas fa-home"></i> Accueil</span>
+                    </li>
+                    <li class="{% if active_tab == 'messages' %}active{% endif %}">
+                        <a href="{% url 'trips:home' %}">
+                            <i class="fas fa-home"></i>Accueil Client
+                        </a>
+                    </li>
+
+
                 </ul>
             </nav>
             
@@ -210,9 +222,8 @@
         </div>
     </div>
 
-    <!-- JavaScript Files -->
-    <script src="{% static 'js/vendor/jquery.min.js' %}"></script>
-    <script src="{% static 'js/dashboard.js' %}"></script>
+ 
+
     <script>
         // Gestion des sous-menus
         $(document).ready(function() {
