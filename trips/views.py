@@ -5,6 +5,7 @@ from .forms import TripSearchForm
 from reservations.forms import ContactForm  # form de contact défini dans reservations
 from django.db.models import Q
 
+
 def home(request):
     """
     Page d'accueil publique. Affiche un formulaire de recherche et les départs actifs.
@@ -24,6 +25,7 @@ def home(request):
         'search_form': search_form,
         'contact_form': contact_form,
         'departures': departures,
+        'active_tab': 'home'
     })
 
 def search_results(request):

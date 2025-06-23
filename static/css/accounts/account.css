@@ -1,4 +1,5 @@
-/* Styles pour la page d'inscription */
+/* ===== AUTHENTICATION & REGISTRATION STYLES ===== */
+
 .auth-container {
     display: flex;
     justify-content: center;
@@ -13,9 +14,10 @@
     border-radius: 12px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 500px;
+    max-width:450px;
     padding: 2.5rem;
-    transition: transform 0.3s ease;
+    margin: 20px 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .auth-card:hover {
@@ -29,7 +31,7 @@
 }
 
 .auth-header i {
-    font-size: 3rem;
+    font-size: 3.5rem;
     color: #FF6B00;
     margin-bottom: 1rem;
 }
@@ -45,40 +47,7 @@
     font-size: 1rem;
 }
 
-.form-group {
-    margin-bottom: 1.5rem;
-    position: relative;
-}
 
-.form-group label {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: #555;
-}
-
-.form-group label i {
-    margin-right: 0.75rem;
-    color: #777;
-    width: 20px;
-    text-align: center;
-}
-
-.form-control {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: all 0.3s;
-}
-
-.form-control:focus {
-    border-color: #FF6B00;
-    box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.1);
-    outline: none;
-}
 
 .password-wrapper {
     position: relative;
@@ -94,6 +63,7 @@
     color: #777;
     cursor: pointer;
     padding: 0.25rem;
+    font-size: 1rem;
 }
 
 .toggle-password:hover {
@@ -158,29 +128,38 @@
     min-height: 1.25rem;
 }
 
-.btn {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: none;
-    font-size: 1rem;
+.alert {
+    padding: 12px 15px;
+    border-radius: 6px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
 }
 
-.btn-primary {
-    background: #FF6B00;
-    color: white;
-    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+.alert-error {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    border: 1px solid rgba(220, 53, 69, 0.2);
 }
 
-.btn-primary:hover {
-    background: #E05D00;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(255, 107, 0, 0.4);
+.alert i {
+    margin-right: 10px;
+}
+
+.field-error {
+    display: flex;
+    align-items: center;
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+.field-error i {
+    margin-right: 5px;
+}
+
+.form-actions {
+    margin: 30px 0;
 }
 
 .btn-block {
@@ -213,7 +192,7 @@
     color: #888;
 }
 
-/* Responsive */
+/* ===== Responsive ===== */
 @media (max-width: 768px) {
     .auth-container {
         padding: 1rem;
@@ -225,11 +204,19 @@
 }
 
 @media (max-width: 576px) {
+    .auth-container {
+        padding: 20px 15px;
+    }
+
+    .auth-card {
+        padding: 30px 20px;
+    }
+
     .auth-header h2 {
         font-size: 1.5rem;
     }
-    
+
     .auth-header i {
-        font-size: 2.5rem;
+        font-size: 3rem;
     }
 }

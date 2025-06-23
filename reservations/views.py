@@ -12,7 +12,7 @@ def reservation_list(request):
     Affiche les réservations du client connecté (lecture seule).
     """
     reservations = Reservation.objects.filter(user=request.user)
-    return render(request, 'reservations/reservation_list.html', {'reservations': reservations})
+    return render(request, 'reservations/reservation_list.html', {'reservations': reservations,'active_tab':'reservation'})
 
 @login_required
 def reserve_departure(request, departure_id):
@@ -34,7 +34,7 @@ def message_list(request):
     Affiche les messages de contact envoyés par le client connecté (filtrés par email).
     """
     messages = ContactMessage.objects.filter(email=request.user.email).order_by('-submitted_at')
-    return render(request, 'reservations/message_list.html', {'messages': messages})
+    return render(request, 'reservations/message_list.html', {'messages': messages, 'active_tab':'message' })
 
 @login_required
 @require_POST

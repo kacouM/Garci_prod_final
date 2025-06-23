@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Accueil{% endblock %}
+{% load static %}
 
 {% block content %}
 <!-- Section Hero -->
@@ -12,6 +13,7 @@
                 </div>
             </div>
         </section>
+
     <!-- Section Recherche de trajets -->
     <section id="search" class="search-section">
         <div class="container">
@@ -40,7 +42,41 @@
                 </form>
             </div>
             
+            <section class="cards-section">
+                    <div class="section-header">
+                        <h3>Prochains départs</h3>
+                    </div>
+                
+                    <div class="cards-grid">
+                        {% for departure in departures|slice:"0:3" %}
+                        <div class="trip-card">
+                            <div class="trip-header">
+                                <h4>{{ departure.trip.origin }} → {{ departure.trip.destination }}</h4>
+                                <span class="trip-category vip">VIP</span>
+                            </div>
+                            <div class="trip-image">
+                                <img src="{% static "imgs/0f7bb52_31208-270c8m.jpg" %}" alt="yamoussoukro Image" class="yamoussoukro">
+                            </div>
+                            <div class="trip-details">
+                                <p><i class="fas fa-calendar-day"></i>Date: {{ departure.time|time:'H:i' }} /{{ departure.date }}</p>
+                                <p><i class="fas fa-bus"></i>Bus: {{ departure.bus }}</p>
+                                <p><i class="fas fa-chair"></i>Prix: {{ departure.trip.price }} FCFA</p>
+                            </div>
+                            <div class="trip-actions">
+                                
+                                <a href="{% url 'reservations:reserve' departure.id %}" class="btn btn-outline">Réserver</a>
+                                <button class="btn btn-primary">Modifier</button>
+                            </div>
+                        </div>
+                        {% empty %}
+                                <i class="fas fa-bus"></i>
+                                <p>Aucun départ disponible actuellement</p>
+                        {% endfor %}
+                    </div>
+                </section>
+
             <!-- Section Départs disponibles -->
+             <!--
             <div class="results-container" id="departures">
                 <h3 class="results-title">Départs disponibles</h3>
                 <table class="departures-table">
@@ -79,6 +115,7 @@
                     </tbody>
                 </table>
             </div>
+            -->
         </div>
     </section>
 
@@ -129,7 +166,7 @@
             <h2 class="section-title">Contactez-nous</h2>
             
             <div class="contact-container">
-                <form method="post" action="">
+                <form class='contact-form ' method="post" action="">
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="contact-name">Nom complet</label>

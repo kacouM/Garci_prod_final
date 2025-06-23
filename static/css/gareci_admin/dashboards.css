@@ -57,7 +57,12 @@ body {
     padding: 20px;
     border-bottom: 1px solid var(--light-gray);
 }
+.logo a{
+    text-decoration:none ;
+    display: flex;
+    align-items: center;
 
+}
 .logo i {
     font-size: 2rem;
     color: var(--primary);
@@ -67,6 +72,7 @@ body {
 .logo h1 {
     font-size: 1.3rem;
     font-weight: 700;
+    color: black;
 }
 
 .logo span {
@@ -124,6 +130,12 @@ body {
     background-color: rgba(255, 107, 0, 0.1);
     color: var(--primary);
     border-left: 3px solid var(--primary);
+}
+
+li.active {
+    background-color: var(--accent);
+    font-weight: bold;
+    border-left: 4px solid var(--primary);
 }
 
 .submenu {
@@ -250,12 +262,16 @@ body {
 }
 
 .breadcrumbs {
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     color: var(--gray);
+    font-weight: bolder;
 }
 
 .breadcrumbs a {
     color: var(--primary);
+    font-size: 1.9rem;
+    font-weight: bolder;
+    
 }
 
 .header-right {
@@ -486,6 +502,64 @@ body {
     cursor: pointer;
     padding: 0 0 0 10px;
 }
+    /* Cards Message Section */
+.cards-section {
+    margin-bottom: 30px;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.trip-card {
+    background-color: rgba(0, 60, 255, 0.123);
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(1, 54, 68, 0.274);
+    padding: 20px;
+}
+
+.trip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 3px solid white;
+}
+
+.trip-header h4 {
+    font-size: 1.1rem;
+}
+
+.trip-category {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+
+.trip-details {
+    margin-bottom: 20px;
+}
+
+.trip-details p {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    
+}
+
+.trip-details i {
+    margin-right: 8px;
+    width: 16px;
+    text-align: center;
+}
+
+
 
 /* Buttons */
 .btn {

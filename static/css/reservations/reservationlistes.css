@@ -161,32 +161,6 @@
     margin: 0 auto;
 }
 
-.empty-reservations i, .auth-required i {
-    font-size: 3rem;
-    color: #FF6B00;
-    margin-bottom: 20px;
-}
-
-.empty-reservations h3, .auth-required h3 {
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.empty-reservations p, .auth-required p {
-    color: #666;
-    margin-bottom: 25px;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.auth-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
-}
-
 /* Responsive table */
 @media (max-width: 768px) {
     .reservations-table {
@@ -238,12 +212,5 @@
         font-size: 1.8rem;
     }
     
-    .auth-buttons {
-        flex-direction: column;
-        gap: 10px;
-    }
     
-    .auth-buttons .btn {
-        width: 100%;
-    }
 }

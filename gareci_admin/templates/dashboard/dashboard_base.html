@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}GareCI Dashboard{% endblock %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/gareci_admin/dashboard_base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/gareci_admin/dashboards.css' %}">
     <link rel="stylesheet" href="{% static 'css/gareci_admin/reservation_list.css' %}">
     <link rel="stylesheet" href="{% static 'css/gareci_admin/reservation_form.css' %}">
     <link rel="stylesheet" href="{% static 'css/gareci_admin/reservation_confirm_delete.css' %}">
@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="{% static 'css/gareci_admin/message_list.css' %}">
     <link rel="stylesheet" href="{% static 'css/gareci_admin/message_form.css' %}">
     <link rel="stylesheet" href="{% static 'css/gareci_admin/message_confirm_delete.css' %}">
-    <link rel="stylesheet" href="{% static 'css/gareci_admin/departure_list.css' %}">
+    <link rel="stylesheet" href="{% static 'css/gareci_admin/departure_list_.css' %}">
     <link rel="stylesheet" href="{% static 'css/gareci_admin/departure_form.css' %}">
     <link rel="stylesheet" href="{% static 'css/gareci_admin/category_list.css' %}">
     <link rel="stylesheet" href="{% static 'css/gareci_admin/category_form.css' %}">
@@ -28,8 +28,10 @@
         <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div class="logo">
-                <i class="fas fa-bus"></i>
-                <h1>Gare<span>CI</span> Admin</h1>
+                <a href="{% url 'dashboard:index' %}">
+                    <i class="fas fa-bus"></i>
+                    <h1>Gare<span>CI</span> Admin</h1>            
+                </a>
             </div>
             
             <nav class="sidebar-nav">
@@ -142,7 +144,7 @@
                             </a>
                             <form method="post" action="{% url 'accounts:logout' %}">
                                 {% csrf_token %}
-                                <button type="submit" class="logout-link">
+                                <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-sign-out-alt"></i> Déconnexion
                                 </button>
                             </form>
@@ -169,9 +171,9 @@
                     {% block header_actions %}
                     <div class="quick-actions">
                         {% if active_tab == 'reservations' %}
-                        <a href="{% url 'dashboard:reservation_confirm' 0 %}" class="btn btn-primary">
+                    <!--    <a href="{% url 'dashboard:reservation_confirm' 0 %}" class="btn btn-primary">
                             <i class="fas fa-check-circle"></i> Confirmer
-                        </a>
+                        </a>-->
                         {% endif %}
                         {% if 'add' in request.path %}
                         <button type="submit" form="create-form" class="btn btn-primary">

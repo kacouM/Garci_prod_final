@@ -50,16 +50,8 @@
     font-size: 1.1rem;
 }
 
-.btn-outline {
-    background-color: transparent;
-    border: 2px solid #6c757d;
-    color: #6c757d;
-    margin-top: 10px;
-}
-
-.btn-outline:hover {
-    background-color: #6c757d;
-    color: white;
+.auth-form .btn-outline {
+    margin-top: 15px;
 }
 
 /* Responsive */

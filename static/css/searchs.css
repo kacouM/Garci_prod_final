@@ -21,7 +21,7 @@
 
 .search-header h1 i {
     margin-right: 15px;
-    color: #FF6B00;
+    color: var(--primary-color);
 }
 
 .search-header .subtitle {
@@ -113,13 +113,24 @@
     max-width: 600px;
     margin: 0 auto;
 }
-
+/*mise enforme du bouton recherche en cas de no-results */
 .no-results i {
     font-size: 3rem;
-    color: #FF6B00;
+    color: var(--primary-color) ;
     margin-bottom: 20px;
 }
-
+.no-results a {
+    font-size: 1.5rem;
+}
+.no-results .btn .fas {
+    font-size: 2rem;
+    color: white ;
+    margin-bottom: 5px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 3px solid rgb(255, 255, 255);
+}
+/*-----*/
 .no-results h3 {
     color: #333;
     margin-bottom: 10px;
@@ -141,10 +152,12 @@
     gap: 8px;
     padding: 10px 20px;
     background-color: #f8f9fa;
-    color: #333;
-    border-radius: 6px;
+    /*color: #333;*/
+    color: var(--primary-color);
+    font-size: larger;
+    border-radius: 10px;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
     transition: all 0.3s;
 }
 
