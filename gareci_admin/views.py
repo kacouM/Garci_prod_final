@@ -275,6 +275,7 @@ class DashboardView(StaffRequiredMixin,ActiveTabMixin, BreadcrumbMixin , Templat
         # Statistiques rapides
         context['total_reservations'] = Reservation.objects.count()
         context['total_users'] = CustomUser.objects.count()
+        
         # Départs à venir (7 prochains jours) avec statistiques
         end_date = today + timedelta(days=7)
         upcoming_departures = Departure.objects.select_related(
@@ -285,6 +286,7 @@ class DashboardView(StaffRequiredMixin,ActiveTabMixin, BreadcrumbMixin , Templat
             date__gte=today,
             date__lte=end_date,
         ).order_by('date', 'time')
+        
         # Organiser les départs par date
         departures_by_date = {}
         for departure in upcoming_departures:
@@ -298,13 +300,19 @@ class DashboardView(StaffRequiredMixin,ActiveTabMixin, BreadcrumbMixin , Templat
             bus_capacity = departure.bus.capacity
             available_seats = max(0, bus_capacity - reservations_count)
             occupancy_rate = (reservations_count / bus_capacity * 100) if bus_capacity > 0 else 0
-            departures_by_date[date_str].append({
+              # Ajouter les informations enrichies
+            departure_info = {
                 'departure': departure,
+                'reservations_count': reservations_count,
                 'available_seats': available_seats,
-                'occupancy_rate': occupancy_rate,
-            })
+                'occupancy_rate': min(100, occupancy_rate)  # Plafonner à 100%
+            }
+            departures_by_date[date_str].append(departure_info)
+            
         context['date_range'] = [today + timedelta(days=i) for i in range(7)]
         context['departures_by_date'] = departures_by_date
+        context['upcoming_trips'] = upcoming_departures.count()
+        
         # Liste complète des départs pour le tableau principal
         context['object_list'] = Departure.objects.select_related('trip', 'bus').all().order_by('-date', '-time')
         # Réservations récentes (10 dernières)
